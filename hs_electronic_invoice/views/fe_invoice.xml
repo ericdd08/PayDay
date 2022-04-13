@@ -21,12 +21,12 @@
 		</xpath>
 
 		<xpath expr="//field[@name='payment_reference']" position="after" >
-			<field name="lastFiscalNumber"  />
-			<field name="puntoFactFiscal"  />	
-			<field name="pagadoCompleto"  />
-			<field name="reembolso" />	
-			<field name="anulado" />
-			<field name="nota_credito" />
+			<field name="lastFiscalNumber" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />
+			<field name="puntoFactFiscal" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />	
+			<field name="pagadoCompleto" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />
+			<field name="reembolso" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}"/>	
+			<field name="anulado" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}"/>
+			<field name="nota_credito" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}"/>
 				
 			
 		<!-- 	<field name="pagadoCompleto" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />	 -->				
