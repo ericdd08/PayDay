@@ -3,6 +3,7 @@
 import base64
 from cmath import log
 from io import BytesIO
+from pydoc import cli
 from odoo import models, fields, api
 import zeep
 import logging
@@ -153,7 +154,7 @@ class electronic_invoice_fields(models.Model):
 	@api.depends('qr_code')
 	def on_change_pago(self):
 		for record in self:
-				# logging.info('Blank QR: ' + str(record.qr_code))
+				logging.info('Blank QR: ' + str(record.qr_code))
 				#if str(record.amount_residual) == '0.0' and record.lastFiscalNumber:
 				if str(record.qr_code) != "False":
 					record.pagadoCompleto = 'FECompletada'
@@ -184,11 +185,7 @@ class electronic_invoice_fields(models.Model):
 
 	@api.depends('move_type', 'partner_id')
 	def on_change_move_type(self):
-		logging.info("El Movimiento es:"+ str(self.move_type))
-		logging.info("Reversed Entry: " + str(self.reversed_entry_id.id))
-		if  self.move_type != False:
-			logging.info("ENTRO AL IFFF:"+ str(self.move_type))
-			logging.info("Payment State Valor:" + str(self.payment_state))
+		if  self.move_type:
 			for record in self:
 				if  record.move_type == 'out_refund' and record.payment_state == "paid":
 					logging.info('Entró a Nota de Crédito: NCRFE - Anulación')
@@ -226,11 +223,10 @@ class electronic_invoice_fields(models.Model):
 					#self.send_anulation_fe()
 					record.anulado = "Anulado"
 					record.reembolso = 'Reembolso'
-				else:
-					record.reembolso = 'Anulado'
 			else:
 				record.reembolso = ''
-						
+
+
 	def llamar_ebi_pac(self):
 		invoice_number = '000001'
 		user_name = ''
@@ -240,6 +236,7 @@ class electronic_invoice_fields(models.Model):
 		info_items_array = []
 		lines_ids = ()
 		info_pagos = []
+		url_wsdl = ''
 
 		for record in self:
 			invoice_number = record.name
@@ -366,7 +363,7 @@ class electronic_invoice_fields(models.Model):
 		fiscal_number_cn = ""
 		last_invoice_number =""
 
-		# logging.info("" + str(self.reversed_entry_id.id))
+		logging.info("" + str(self.reversed_entry_id.id))
 		original_invoice_id = self.env["account.move"].search([('id','=',self.reversed_entry_id.id)],limit = 1)
 		if original_invoice_id:
 			last_invoice_number = original_invoice_id.name
@@ -378,20 +375,8 @@ class electronic_invoice_fields(models.Model):
 			invoice_fe_cn = original_invoice_info.invoiceNumber
 			fiscal_number_cn = original_invoice_info.numeroDocumentoFiscal
 
-		logging.info("Tipo de Documento: " + self.tipo_documento_fe)
+		logging.info("Tipo de Documento Nota Crédito: " + self.tipo_documento_fe)
 		# DatosFactura
-		informacion_interes = "Factura interna"
-		if self.tipo_documento_fe  == "09":
-			informacion_interes = "Factura Reembolso"
-
-		if self.tipo_documento_fe  == "04":
-			informacion_interes = "Nota de Crédito Referente a Una o Varias FE"
-
-		if self.tipo_documento_fe  == "06":
-			informacion_interes = "Nota de Crédito Genérica"
-
-
-
 		datosTransaccion = dict({
 			"tipoEmision": self.tipo_emision_fe,
 			"tipoDocumento": self.tipo_documento_fe,
@@ -405,24 +390,23 @@ class electronic_invoice_fields(models.Model):
 			"envioContenedor": self.envioContenedor_fe,
 			"procesoGeneracion": self.procesoGeneracion_fe,
 			"tipoVenta": self.tipoVenta_fe,
-			"informacionInteres": informacion_interes,
 			"fechaEmision": str(output_date).replace("Z","-05:00"),
 			"cliente": clienteDict
 		})
 		
 		if datosTransaccion["tipoEmision"] in ('02', '04'):
-			#Todo: Esto no me sta funcionando
+			
 			datosTransaccion["fechaInicioContingencia"] = self.fecha_inicio_contingencia.strftime("%Y-%m-%dT%I:%M:%S-05:00")
-			# datosTransaccion["fechaInicioContingencia"] = '2022-03-30T04:57:00 %p'
+			# Minimo 15 caracteres
 			datosTransaccion["motivoContingencia"] = self.motivo_contingencia
 		
 		if self.tipo_documento_fe == "04":
 			datosTransaccion["listaDocsFiscalReferenciados"] =dict({
 				"docFiscalReferenciado": {
-					"fechaEmisionDocFiscalReferenciado": str(output_date).replace("Z","-05:00"),#fecha_fe_cn,
+					"fechaEmisionDocFiscalReferenciado":fecha_fe_cn,
 					"cufeFEReferenciada":cufe_fe_cn,
 					# "cufeFEReferenciada":'',
-					#"nroFacturaPapel":fiscal_number_cn,
+					"nroFacturaPapel":fiscal_number_cn,
 					# "nroFacturaImpFiscal":fiscal_number_cn
 				}
 			})
@@ -433,6 +417,7 @@ class electronic_invoice_fields(models.Model):
 	def send_anulation_fe(self):
 		logging.info('Llamar anulacion... ')
 		context = self._context
+		url_wsdl = ''
 		#self.delete_file(self.env.cr, context.get('uid'))
 		document = self.env["electronic.invoice"].search([('name','=','ebi-pac')],limit = 1)
 		
@@ -539,11 +524,18 @@ class electronic_invoice_fields(models.Model):
 		)
 	
 		res = (docClient.service.DescargaPDF(**datosToDownloadPdf))
-		# logging.info('Respuesta PDF RES:' + str(res))
-		# logging.info('Documento EF PDF:' + str(res['documento']))
+		logging.info('Respuesta PDF RES:' + str(res))
+		logging.info('Documento EF PDF:' + str(res['documento']))
 		# Define the Base64 string of the PDF file
 		b64 = str(res['documento'])
-		
+		#self.insert_data_to_electronic_invoice_moves(res, self.invoice_number)
+		#body = "<a href='data:application/pdf;base64,"+b64+"' target='_blank' download='HSFE.pdf'><i class='fa fa-file-pdf-o'></i>HSFE.pdf</a>"
+		#body = "Factura Electrónica Creada:<br> <b>CUFE:</b> (<a href='"+res.qr+"'>"+str(res.cufe)+")</a><br> <b>QR:</b><br> <img src='https://static.semrush.com/blog/uploads/media/43/b0/43b0b9a04c8a433a0c52360c9cc9aaf2/seo-guide-to-yoast-for-wordpress.svg'  height='288' width='388'/>" 
+		#records = self._get_followers(cr, uid, ids, None, None, context=context)
+		#followers = records[ids[0]]['message_follower_ids']
+		#self.message_post(body=body)
+
+		#pdf = self.env.ref('module_name..report_id').render_qweb_pdf(self.ids)
 		b64_pdf = b64#base64.b64encode(pdf[0])
 		# save pdf as attachment
 		name = self.lastFiscalNumber
@@ -595,14 +587,12 @@ class electronic_invoice_fields(models.Model):
 
 	# Build item Object for item list
 	def set_array_item_object(self, invoice_items):
+		typeCustomers=self.partner_id.TipoClienteFE
 		logging.info("Producto:" + str(invoice_items))
 		array_items = []
 		if invoice_items:
 				for item in invoice_items:	
-					#logging.info("Product ID:" + str(item) + str(item.product_id.name))	
-					# logging.info("Account Tax IDS:" + str(item.tax_ids))
-					# tax_ids = item.tax_ids	
-					# logging.info("Account Tax IDS:" + str(tax_ids))
+					logging.info("Product ID:" + str(item))
 					if item.tax_ids:
 						tax_ids_str = str(item.tax_ids).replace("account.tax","").replace("(","").replace(")","").replace(",","")
 						# logging.info("Tax IDS:" + str(tuple_tax_ids_str))
@@ -616,8 +606,6 @@ class electronic_invoice_fields(models.Model):
 						tax_item = False
 					
 					if tax_item:
-						#logging.info("Tax Name:" + str(tax_item.name))
-						#logging.info("Tax Name:" + str(tax_item.amount))
 						monto_porcentaje = tax_item.amount
 						if int(tax_item.amount) == 15:
 							tasaITBMS = "03" 
@@ -631,6 +619,7 @@ class electronic_invoice_fields(models.Model):
 						tasaITBMS = "00"
 						monto_porcentaje = 0
 					
+					
 					new_item_object = {}
 					new_item_object['descripcion'] = str(item.product_id.name)
 					new_item_object['cantidad'] = str('%.2f' % round(item.quantity, 2))
@@ -639,13 +628,31 @@ class electronic_invoice_fields(models.Model):
 					new_item_object['valorTotal'] = str('%.2f' % round((((item.quantity * item.price_unit) + ((item.price_unit * monto_porcentaje)/100)) - item.discount), 2))
 					new_item_object['codigoGTIN'] = str("")
 					new_item_object['cantGTINCom'] = str("")
-					new_item_object['codigoGTINInv'] = str("")
+					new_item_object['codigoGTINInv'] = str(item.product_id.codigoGTINInv) if item.product_id.codigoGTINInv else ''
 					new_item_object['tasaITBMS'] = str(tasaITBMS)
 					new_item_object['valorITBMS'] = str('%.2f' % round((item.price_unit * monto_porcentaje)/100, 2))
 					new_item_object['cantGTINComInv'] = str("")
+					if item.product_id.categoryProduct=='Materia prima Farmacéutica' or item.product_id.categoryProduct=='Medicina' or item.product_id.categoryProduct=='Alimento':
+						new_item_object['fechaFabricacion'] =  str(item.fechaFabricacion.strftime("%Y-%m-%dT%I:%M:%S-05:00"))
+						new_item_object['fechaCaducidad'] = str(item.fechaCaducidad.strftime("%Y-%m-%dT%I:%M:%S-05:00"))
+
+					# if typeCustomers=="03":
+					# 	new_item_object["CodigoCPBS"]=item.product_id.codigoCPBS
+
+					# if item.tasaISC:
+					# 	new_item_object["TasaISC"]=item.product_id.codigoCPBS
+
+					# if item.valorISC:
+					# 	new_item_object["ValorISC"]=item.product_id.valorISC
+
+					# if item.tasaOTI:
+					# 	new_item_object["tasaOTI"]=item.product_id.tasaOTI
+
+					# if item.valorTasa:
+					# 	new_item_object["valorTasa"]=item.product_id.valorTasa
 
 					array_items.append(new_item_object)
-
+		logging.info("Product info" + str(array_items))	
 		return array_items
 
 	def set_array_info_pagos(self, payments_items):
@@ -666,17 +673,37 @@ class electronic_invoice_fields(models.Model):
 
 		return array_pagos
 
+
 	def set_cliente_dict(self, user_name, user_email):
 		logging.info('Pais del cliente: ' + str(self.partner_id.country_id.code))
-
+		tipo_cliente_fe = '02'
+		tipo_contribuyente = 1 #Juridico
 		client_obj = {
-			"tipoClienteFE" : "02", #reemplazar por TipoclienteFE desde res.partner
-			"tipoContribuyente": 1,
+			"tipoClienteFE" : tipo_cliente_fe, #reemplazar por TipoclienteFE desde res.partner
+			"tipoContribuyente": tipo_contribuyente,
 			"numeroRUC" : "8792965",
-			"pais": str(self.partner_id.country_id.code),
+			"pais": "PA",
 			"correoElectronico1" : user_email,
 			"razonSocial" : user_name
 		}
+		# check if TipoClienteFE is 01/03
+		if tipo_cliente_fe in ('01', '03'):
+			client_obj['digitoVerificadorRUC'] = '42' #viene de res.partner
+			client_obj['razonSocial']          = 'test razón social'
+			client_obj['direccion']            = 'Urbanización, Calle, Casa, Número de Local'
+			client_obj['codigoUbicacion']      = '8-8-8'
+			client_obj['provincia']            = '8'
+			client_obj['distrito']             = '8'
+			client_obj['corregimiento']        = '8'
+		
+		if tipo_cliente_fe in ('04'):
+			tipoIdentificacion = '01'
+			client_obj['tipoIdentificacion'] = '01'
+			client_obj['nroIdentificacionExtranjero'] = 'Número de Pasaporte o Número de Identificación Tributaria Extranjera' 
+			if tipoIdentificacion == '01':
+				client_obj['paisExtranjero'] = 'Utilizar nombre completo del país.'
+		
+		
 		return client_obj
 
 	def set_subtotales_dict(self, monto_sin_impuesto, monto_total_factura, cantidad_items):

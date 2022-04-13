@@ -33,28 +33,32 @@
 		</xpath>
 		<!-- header_left_group -->
 		<!-- <xpath expr="//group[@id='header_right_group']" position="after" >	 attrs="{'readonly':[('payment_state','=','paid')]}"			 -->
-		<xpath expr="/form/sheet/group" position="after" >				
-			<group name="fe-group" string="Datos FE">
-				<group name="left_g" string="">
-					<field name="tipo_documento_fe"  />							
-					<field name="tipo_emision_fe" />							
-					<field name="naturaleza_operacion_fe" />							
-					<field name="tipo_operacion_fe" />							
-					<field name="destino_operacion_fe" />							
-					<field name="tipoVenta_fe" />							
-					<!-- <field name="reembolso" />							 -->
-					<field name="reversal_reason_fe" />							
+		<!-- <xpath expr="/form/sheet/group" position="after" >		other_info		 -->
+		<!-- move_type -->
+		<xpath expr="//page[@name='other_info']" position="after">	
+			<page name="pageConfigFE" string="Configuración FE" attrs="{'invisible':[('move_type','=','in_invoice')]}">			
+				<group name="fe-group" string="Datos FE" >
+					<group name="left_g" string="">
+						<field name="tipo_documento_fe"  />							
+						<field name="tipo_emision_fe" />							
+						<field name="naturaleza_operacion_fe" />							
+						<field name="tipo_operacion_fe" />							
+						<field name="destino_operacion_fe" />							
+						<field name="tipoVenta_fe" />							
+						<!-- <field name="reembolso" />							 -->
+						<field name="reversal_reason_fe" />							
+					</group>
+					<group name="right_g" string="">
+						<field name="fecha_inicio_contingencia"  attrs="{'invisible':[('tipo_emision_fe','not in',('02', '04'))], 'required':[('tipo_emision_fe','in',('02', '04'))]}"/>	
+						<field name="motivo_contingencia"  attrs="{'invisible':[('tipo_emision_fe','not in',('02', '04'))],'required':[('tipo_emision_fe','in',('02', '04'))] }"/>
+						<field name="formatoCAFE_fe" />	
+						<field name="entregaCAFE_fe" />	
+						<field name="envioContenedor_fe" />	
+						<field name="procesoGeneracion_fe" />
+						<field name="tipoSucursal_fe" />	
+					</group>
 				</group>
-				<group name="right_g" string="">
-					<field name="fecha_inicio_contingencia"  attrs="{'invisible':[('tipo_emision_fe','not in',('02', '04'))], 'required':[('tipo_emision_fe','in',('02', '04'))]}"/>	
-					<field name="motivo_contingencia"  attrs="{'invisible':[('tipo_emision_fe','not in',('02', '04'))],'required':[('tipo_emision_fe','in',('02', '04'))] }"/>
-					<field name="formatoCAFE_fe" />	
-					<field name="entregaCAFE_fe" />	
-					<field name="envioContenedor_fe" />	
-					<field name="procesoGeneracion_fe" />
-					<field name="tipoSucursal_fe" />	
-				</group>
-			</group>
+			</page>
 		</xpath>		
 	  </field>
 	</record>
