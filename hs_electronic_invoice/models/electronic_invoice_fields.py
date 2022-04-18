@@ -199,7 +199,7 @@ class electronic_invoice_fields(models.Model):
     def on_change_type(self):
         if self.type:
             for record in self:
-                if record.type == 'out_refund' and record.payment_state == "paid":
+                if record.type == 'out_refund':  # and record.payment_state == "paid":
                     logging.info('Entró a Nota de Crédito: NCRFE - Anulación')
                     record.tipo_documento_fe = "04"
                     record.nota_credito = "NotaCredito"
