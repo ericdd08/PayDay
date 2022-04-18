@@ -235,17 +235,6 @@ class electronic_invoice_fields(models.Model):
         else:
             record.nota_credito = ""
 
-    # @api.depends('payment_state')
-    # def on_change_payment_state(self):
-        # for record in self:
-            # if str(record.payment_state) == "reversed":
-            # if(record.anulado != 'Anulado'):
-            # self.send_anulation_fe()
-            #record.anulado = "Anulado"
-            #record.reembolso = 'Reembolso'
-            # else:
-            #record.reembolso = ''
-
     def llamar_ebi_pac(self):
         invoice_number = '000001'
         user_name = ''
@@ -441,7 +430,7 @@ class electronic_invoice_fields(models.Model):
             datosTransaccion["listaDocsFiscalReferenciados"] = dict({
                 "docFiscalReferenciado": {
                     "fechaEmisionDocFiscalReferenciado": fecha_fe_cn,
-                    "cufeFEReferenciada": cufe_fe_cn,
+                    "cufeFEReferenciada": str(output_date).replace("Z", "-05:00"),
                     # "cufeFEReferenciada":'',
                     # "nroFacturaPapel": fiscal_number_cn,
                     # "nroFacturaImpFiscal":fiscal_number_cn
@@ -635,7 +624,6 @@ class electronic_invoice_fields(models.Model):
             'invoiceNumber': invoice_number
         })
 
-    # Build item Object for item list
     def set_array_item_object(self, invoice_items):
         typeCustomers = self.partner_id.TipoClienteFE
         logging.info("Producto:" + str(invoice_items))
