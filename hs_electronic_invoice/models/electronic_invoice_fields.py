@@ -156,7 +156,7 @@ class electronic_invoice_fields(models.Model):
     #reembolso = fields.Char(string = 'Reembolso', compute="on_change_payment_state", readonly = "True")
     anulado = fields.Char(string='Anulado', readonly="True", store="True")
     nota_credito = fields.Char(
-        string='Nota de Crédito', readonly="True", compute="on_change_move_type",)
+        string='Nota de Crédito', readonly="True", compute="on_change_type",)
 
     @api.depends('qr_code')
     def on_change_pago(self):
@@ -195,18 +195,18 @@ class electronic_invoice_fields(models.Model):
                         document.numeroDocumentoFiscal = str(
                             int(document.numeroDocumentoFiscal)+1)
 
-    @api.depends('move_type', 'partner_id')
-    def on_change_move_type(self):
-        if self.move_type:
+    @api.depends('type', 'partner_id')
+    def on_change_type(self):
+        if self.type:
             for record in self:
-                if record.move_type == 'out_refund' and record.payment_state == "paid":
+                if record.type == 'out_refund' and record.payment_state == "paid":
                     logging.info('Entró a Nota de Crédito: NCRFE - Anulación')
                     record.tipo_documento_fe = "04"
                     record.nota_credito = "NotaCredito"
                 else:
                     record.nota_credito = ""
                     # and self.payment_state == "not_paid":
-                    if record.move_type == 'out_refund' and record.state == "draft" and record.reversed_entry_id.id != False:
+                    if record.type == 'out_refund' and record.state == "draft" and record.reversed_entry_id.id != False:
 
                         original_invoice_id = self.env["account.move"].search(
                             [('id', '=', self.reversed_entry_id.id)], limit=1)
@@ -224,7 +224,7 @@ class electronic_invoice_fields(models.Model):
                                 self.nota_credito = "NotaCredito"
                     else:
                         # and self.payment_state == "not_paid":
-                        if record.move_type == 'out_refund' and record.state == "draft" and record.reversed_entry_id.id == False:
+                        if record.type == 'out_refund' and record.state == "draft" and record.reversed_entry_id.id == False:
                             logging.info('Entró a Nota de Crédito: NCG')
                             record.tipo_documento_fe = "06"
                             record.nota_credito = "NotaCredito"
