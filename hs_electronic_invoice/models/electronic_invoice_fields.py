@@ -198,6 +198,7 @@ class electronic_invoice_fields(models.Model):
     @api.depends('type', 'partner_id')
     def on_change_type(self):
         if self.type:
+            logging.info('Entró a cambio type:' + str(self.type))
             for record in self:
                 if record.type == 'out_refund' and record.amount_residual == "0.00":
                     logging.info('Entró a Nota de Crédito: NCRFE - Anulación')
