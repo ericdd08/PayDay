@@ -332,7 +332,7 @@ class electronic_invoice_fields(models.Model):
         # datos del EBI Completos
         logging.info('DATOS DE EBI COMPLETOS: ' + str(datos))
         # send request to EBIPAC SERVICE
-        if (self.tipo_documento_fe != "04") or (self.tipo_documento_fe == "04" and self.payment_state != "paid"):
+        if (self.tipo_documento_fe != "04") or (self.tipo_documento_fe == "04" and self.amount_total != self.amount_residual):
             res = (cliente.service.Enviar(**datos))
             logging.info('Response code: ' + str(res.codigo))
             if(int(res['codigo']) == 200):
@@ -481,7 +481,7 @@ class electronic_invoice_fields(models.Model):
         original_invoice_id = self.env["account.move"].search(
             [('id', '=', self.reversed_entry_id.id)], limit=1)
         if original_invoice_id:
-            payment = original_invoice_id.payment_state
+            #payment = original_invoice_id.payment_state
             inv_lastFiscalNumber = original_invoice_id.lastFiscalNumber
             inv_tipo_documento_fe = original_invoice_id.tipo_documento_fe
             inv_tipo_emision_fe = original_invoice_id.tipo_emision_fe
@@ -543,7 +543,7 @@ class electronic_invoice_fields(models.Model):
             inv_tipo_documento_fe = ""
             inv_tipo_emision_fe = ""
 
-        if self.tipo_documento_fe == "04" and self.payment_state == "paid":
+        if self.tipo_documento_fe == "04" and self.amount_residual == "0.00":
             original_invoice_id = self.env["account.move"].search(
                 [('id', '=', self.reversed_entry_id.id)], limit=1)
             if original_invoice_id:
@@ -586,8 +586,8 @@ class electronic_invoice_fields(models.Model):
         b64_pdf = b64  # base64.b64encode(pdf[0])
         # save pdf as attachment
         name = self.lastFiscalNumber
-        if str(self.payment_state) == "reversed":
-            name = name + "-Anulada"
+        # if str(self.payment_state) == "reversed":
+        #name = name + "-Anulada"
 
         return self.env['ir.attachment'].create({
             'name': name,
