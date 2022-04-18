@@ -211,8 +211,9 @@ class electronic_invoice_fields(models.Model):
                         original_invoice_id = self.env["account.move"].search(
                             [('id', '=', self.reversed_entry_id.id)], limit=1)
                         if original_invoice_id:
-                            payment = original_invoice_id.payment_state
-                            if payment != "not_paid" and payment != "reversed":
+                            payment = original_invoice_id.amount_residual
+                            logging.info("estos son los pagos!!!" + payment)
+                            if payment != self.amoun_total:  # and payment != "reversed":
                                 logging.info(
                                     'Entró a Nota de Crédito: Reembolso')
                                 record.tipo_documento_fe = "09"
