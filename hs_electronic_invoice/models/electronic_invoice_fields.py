@@ -284,7 +284,7 @@ class electronic_invoice_fields(models.Model):
                 invoice_items)  # return array of items objects
 
         payments_items = self.env["account.payment"].search(
-            [('ref', '=', str(invoice_number))])
+            [('invoice_ids', 'in', tuple(str(self.id)))])
         # get an array to info_pagos
         info_pagos = self.set_array_info_pagos(payments_items)
 
