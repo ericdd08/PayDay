@@ -24,7 +24,7 @@
 			<field name="lastFiscalNumber" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />
 			<field name="puntoFactFiscal" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />	
 			<field name="pagadoCompleto" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />
-			<field name="reembolso" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}"/>	
+				<!--<field name="reembolso" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}"/>		 -->
 			<field name="anulado" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}"/>
 			<field name="nota_credito" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}"/>
 				
