@@ -21,7 +21,7 @@
 		</xpath>
 
 		<xpath expr="//field[@name='journal_id']" position="after" >
-			<field name="lastFiscalNumber" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />
+			
 			<field name="puntoFactFiscal" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />	
 			<field name="pagadoCompleto" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />
 				<!--<field name="reembolso" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}"/>		 -->
@@ -46,7 +46,8 @@
 						<field name="destino_operacion_fe" />							
 						<field name="tipoVenta_fe" />							
 						<!-- <field name="reembolso" />							 -->
-						<field name="reversal_reason_fe" />							
+						<field name="reversal_reason_fe" />	
+						<field name="lastFiscalNumber"/>						
 					</group>
 					<group name="right_g" string="">
 						<field name="fecha_inicio_contingencia"  attrs="{'invisible':[('tipo_emision_fe','not in',('02', '04'))], 'required':[('tipo_emision_fe','in',('02', '04'))]}"/>	
