@@ -429,8 +429,9 @@ class electronic_invoice_fields(models.Model):
         if self.tipo_documento_fe == "04":
             datosTransaccion["listaDocsFiscalReferenciados"] = dict({
                 "docFiscalReferenciado": {
-                    "fechaEmisionDocFiscalReferenciado": fecha_fe_cn,
-                    "cufeFEReferenciada": str(output_date).replace("Z", "-05:00"),
+                    # fecha_fe_cn,
+                    "fechaEmisionDocFiscalReferenciado": str(output_date).replace("Z", "-05:00"),
+                    "cufeFEReferenciada": cufe_fe_cn,
                     # "cufeFEReferenciada":'',
                     # "nroFacturaPapel": fiscal_number_cn,
                     # "nroFacturaImpFiscal":fiscal_number_cn
