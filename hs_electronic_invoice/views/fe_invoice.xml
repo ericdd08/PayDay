@@ -16,7 +16,7 @@
 			<attribute name="attrs">{'invisible': [('pagadoCompleto','=','FECompletada')]}</attribute>
 		</xpath>
 		
-		<xpath expr="//field[@name='move_type']" position="before" >
+		<xpath expr="//field[@name='type']" position="before" >
 			<field name="qr_code" widget='image' attrs="{'invisible': [('pagadoCompleto','!=','FECompletada')]}" class="oe_avatar"/>				
 		</xpath>
 
