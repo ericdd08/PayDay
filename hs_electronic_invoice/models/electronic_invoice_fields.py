@@ -443,7 +443,7 @@ class electronic_invoice_fields(models.Model):
                     "fechaEmisionDocFiscalReferenciado": fecha_fe_cn,
                     "cufeFEReferenciada": cufe_fe_cn,
                     # "cufeFEReferenciada":'',
-                    "nroFacturaPapel": fiscal_number_cn,
+                    # "nroFacturaPapel": fiscal_number_cn,
                     # "nroFacturaImpFiscal":fiscal_number_cn
                 }
             })
@@ -545,7 +545,7 @@ class electronic_invoice_fields(models.Model):
             inv_tipo_documento_fe = ""
             inv_tipo_emision_fe = ""
 
-        if self.tipo_documento_fe == "04" and self.amount_residual == "0.0":
+        if self.tipo_documento_fe == "04" and str(self.amount_residual) == "0.0":
             original_invoice_id = self.env["account.move"].search(
                 [('id', '=', self.reversed_entry_id.id)], limit=1)
             if original_invoice_id:
