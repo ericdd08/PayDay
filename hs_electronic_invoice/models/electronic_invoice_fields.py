@@ -325,7 +325,7 @@ class electronic_invoice_fields(models.Model):
         # send request to EBIPAC SERVICE
         logging.info('Monto Total: ' + str(self.amount_total) +
                      "Residuo: " + str(self.amount_residual))
-        if (self.tipo_documento_fe != "04") or (self.tipo_documento_fe == "04" and str(self.amount_total) != str(self.amount_residual)):
+        if (self.tipo_documento_fe != "04") or (self.tipo_documento_fe == "04" and str(self.amount_residual) != "0.0"):
             res = (cliente.service.Enviar(**datos))
             logging.info('Response code: ' + str(res.codigo))
             if(int(res['codigo']) == 200):
