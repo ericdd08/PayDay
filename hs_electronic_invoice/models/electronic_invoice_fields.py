@@ -726,6 +726,7 @@ class electronic_invoice_fields(models.Model):
                 '%.2f' % round(float(self.amount_total), 2))
             array_pagos.append(nuevo_diccionario2)
 
+        logging.info('Montos de Pagos: ' + str(array_pagos))
         return array_pagos
 
     def set_cliente_dict(self, user_name, user_email):
