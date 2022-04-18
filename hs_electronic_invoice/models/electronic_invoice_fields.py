@@ -200,7 +200,7 @@ class electronic_invoice_fields(models.Model):
         if self.type:
             logging.info('Entró a cambio type:' + str(self.type))
             for record in self:
-                if record.type == 'out_refund' and record.amount_residual == "0.00":
+                if record.type == 'out_refund' and record.amount_residual == "0.0":
                     logging.info('Entró a Nota de Crédito: NCRFE - Anulación')
                     record.tipo_documento_fe = "04"
                     record.nota_credito = "NotaCredito"
@@ -544,7 +544,7 @@ class electronic_invoice_fields(models.Model):
             inv_tipo_documento_fe = ""
             inv_tipo_emision_fe = ""
 
-        if self.tipo_documento_fe == "04" and self.amount_residual == "0.00":
+        if self.tipo_documento_fe == "04" and self.amount_residual == "0.0":
             original_invoice_id = self.env["account.move"].search(
                 [('id', '=', self.reversed_entry_id.id)], limit=1)
             if original_invoice_id:
