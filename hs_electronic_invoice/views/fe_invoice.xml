@@ -20,7 +20,7 @@
 			<field name="qr_code" widget='image' attrs="{'invisible': [('pagadoCompleto','!=','FECompletada')]}" class="oe_avatar"/>				
 		</xpath>
 
-		<xpath expr="//field[@name='payment_reference']" position="after" >
+		<xpath expr="//field[@name='journal_id']" position="after" >
 			<field name="lastFiscalNumber" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />
 			<field name="puntoFactFiscal" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />	
 			<field name="pagadoCompleto" attrs="{'invisible': [('pagadoCompleto','!=','-000')]}" />
