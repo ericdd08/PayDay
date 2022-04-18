@@ -277,6 +277,7 @@ class electronic_invoice_fields(models.Model):
 
         payments_items = self.env["account.payment"].search(
             [('invoice_ids', 'in', tuple(str(self.id)))])
+        logging.info("Los pagos en v13:" + payments_items)
         # get an array to info_pagos
         info_pagos = self.set_array_info_pagos(payments_items)
 
