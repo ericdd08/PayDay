@@ -213,7 +213,7 @@ class electronic_invoice_fields(models.Model):
                         if original_invoice_id:
                             payment = original_invoice_id.amount_residual
                             logging.info("estos son los pagos!!!" + payment)
-                            if payment != self.amoun_total:  # and payment != "reversed":
+                            if payment != self.amount_total:  # and payment != "reversed":
                                 logging.info(
                                     'Entró a Nota de Crédito: Reembolso')
                                 record.tipo_documento_fe = "09"
