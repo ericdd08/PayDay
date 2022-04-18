@@ -8,7 +8,7 @@
 	  <field name="inherit_id" ref="account.view_move_form"/>
 	  <field name="arch" type="xml">
 		<xpath expr="//header" position="inside">
-			<button  attrs="{'invisible':['|','|',('state','!=','posted'),('pagadoCompleto','=','FECompletada'),('move_type','=','in_invoice')]}"   style="border: solid 1px;background: #7c7bad;color: white;" 
+			<button  attrs="{'invisible':['|','|',('state','!=','posted'),('pagadoCompleto','=','FECompletada'),('type','=','in_invoice')]}"   style="border: solid 1px;background: #7c7bad;color: white;" 
 			name="llamar_ebi_pac" string="Crear Documento Fiscal"  type="object" />
 		</xpath>
 
@@ -34,9 +34,9 @@
 		<!-- header_left_group -->
 		<!-- <xpath expr="//group[@id='header_right_group']" position="after" >	 attrs="{'readonly':[('payment_state','=','paid')]}"			 -->
 		<!-- <xpath expr="/form/sheet/group" position="after" >		other_info		 -->
-		<!-- move_type -->
+		<!-- type -->
 		<xpath expr="//page[@name='other_info']" position="after">	
-			<page name="pageConfigFE" string="Configuración FE" attrs="{'invisible':[('move_type','=','in_invoice')]}">			
+			<page name="pageConfigFE" string="Configuración FE" attrs="{'invisible':[('type','=','in_invoice')]}">			
 				<group name="fe-group" string="Datos FE" >
 					<group name="left_g" string="">
 						<field name="tipo_documento_fe"  />							
