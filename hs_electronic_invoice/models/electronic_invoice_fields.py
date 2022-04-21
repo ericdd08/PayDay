@@ -505,6 +505,7 @@ class electronic_invoice_fields(models.Model):
         logging.info("Objeto Enviado: " + str(datos))
         logging.info("texto de ejecución de anulacion: " + str(res))
         if(int(res['codigo']) == 200):
+            original_invoice_id.state = "cancel"
             self.pagadoCompleto = "FECompletada"
             body = "Mensaje: "+res.resultado + \
                 ": <br> <b> ("+str(res.mensaje)+")</b><br>"
