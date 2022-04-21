@@ -441,7 +441,7 @@ class electronic_invoice_fields(models.Model):
                     "fechaEmisionDocFiscalReferenciado": fecha_fe_cn,
                     "cufeFEReferenciada": cufe_fe_cn,
                     # "cufeFEReferenciada":'',
-                    "nroFacturaPapel": fiscal_number_cn,
+                    # "nroFacturaPapel": fiscal_number_cn,
                     # "nroFacturaImpFiscal":fiscal_number_cn
                 }
             })
