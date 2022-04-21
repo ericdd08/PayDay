@@ -214,7 +214,8 @@ class electronic_invoice_fields(models.Model):
                             [('id', '=', self.reversed_entry_id.id)], limit=1)
                         if original_invoice_id:
                             payment = original_invoice_id.amount_residual
-                            logging.info("estos son los pagos!!!" + payment)
+                            logging.info(
+                                "estos son los pagos!!!" + str(payment))
                             if payment != self.amount_total:  # and payment != "reversed":
                                 logging.info(
                                     'Entró a Nota de Crédito: Reembolso')
