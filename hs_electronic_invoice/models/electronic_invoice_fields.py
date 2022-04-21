@@ -439,7 +439,7 @@ class electronic_invoice_fields(models.Model):
             datosTransaccion["listaDocsFiscalReferenciados"] = dict({
                 "docFiscalReferenciado": {
                     # fecha_fe_cn,
-                    "fechaEmisionDocFiscalReferenciado": str(output_date).replace("Z", "-05:00")s,
+                    "fechaEmisionDocFiscalReferenciado": str(output_date).replace("Z", "-05:00"),
                     "cufeFEReferenciada": cufe_fe_cn,
                     # "cufeFEReferenciada":'',
                     # "nroFacturaPapel": fiscal_number_cn,
