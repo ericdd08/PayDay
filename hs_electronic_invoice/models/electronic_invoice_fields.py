@@ -589,7 +589,7 @@ class electronic_invoice_fields(models.Model):
         #name = name + "-Anulada"
 
         return self.env['ir.attachment'].create({
-            'name': name,
+            'name': name + str(".pdf"),
             'type': 'binary',
             'datas': b64_pdf,
             'res_model': self._name,
