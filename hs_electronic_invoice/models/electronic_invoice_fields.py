@@ -685,7 +685,7 @@ class electronic_invoice_fields(models.Model):
                     item.product_id.codigoGTINInv) if item.product_id.codigoGTINInv else ''
                 new_item_object['tasaITBMS'] = str(tasaITBMS)
                 new_item_object['valorITBMS'] = str('%.2f' % round(
-                    (item.price_unit * monto_porcentaje)/100, 2))
+                    (item.price_subtotal * monto_porcentaje)/100, 2))
                 new_item_object['cantGTINComInv'] = str("")
                 if item.product_id.categoryProduct == 'Materia prima Farmacéutica' or item.product_id.categoryProduct == 'Medicina' or item.product_id.categoryProduct == 'Alimento':
                     new_item_object['fechaFabricacion'] = str(
