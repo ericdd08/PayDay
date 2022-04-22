@@ -17,6 +17,7 @@
 									<field name="fechaCaducidad"/>
 									<field name="codigoCPBSAbrev"/>	
                                 </group>
+			
                                 <group>
 									<field name="codigoCPBS" />
 									<field name="unidadMedidaCPBS"/>
