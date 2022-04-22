@@ -420,6 +420,7 @@ class electronic_invoice_fields(models.Model):
             "envioContenedor": self.envioContenedor_fe,
             "procesoGeneracion": self.procesoGeneracion_fe,
             "tipoVenta": self.tipoVenta_fe,
+            "informacionInteres": self.narration,
             "fechaEmision": str(output_date).replace("Z", "-05:00"),
             "cliente": clienteDict
         })
