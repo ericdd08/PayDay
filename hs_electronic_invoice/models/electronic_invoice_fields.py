@@ -669,7 +669,7 @@ class electronic_invoice_fields(models.Model):
                     monto_porcentaje = 0
 
                 new_item_object = {}
-                new_item_object['descripcion'] = str(item.product_id.name)
+                new_item_object['descripcion'] = str(item.name)
                 new_item_object['cantidad'] = str(
                     '%.2f' % round(item.quantity, 2))
                 new_item_object['precioUnitario'] = str(
