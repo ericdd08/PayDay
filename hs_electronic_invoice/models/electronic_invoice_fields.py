@@ -406,6 +406,10 @@ class electronic_invoice_fields(models.Model):
 
         logging.info("Tipo de Documento Nota Crédito: " +
                      self.tipo_documento_fe)
+
+        informacionInteres = ""
+        if self.narration:
+            informacionInteres = self.narration
         # DatosFactura
         datosTransaccion = dict({
             "tipoEmision": self.tipo_emision_fe,
@@ -420,7 +424,7 @@ class electronic_invoice_fields(models.Model):
             "envioContenedor": self.envioContenedor_fe,
             "procesoGeneracion": self.procesoGeneracion_fe,
             "tipoVenta": self.tipoVenta_fe,
-            "informacionInteres": self.narration,
+            "informacionInteres": informacionInteres,
             "fechaEmision": str(output_date).replace("Z", "-05:00"),
             "cliente": clienteDict
         })
