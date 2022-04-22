@@ -9,6 +9,7 @@ class product_field(models.Model):
 	_inherit = "product.template"
 	mensaje_codigo='Codigos tipo:\nGTIN – 14 (14 caracteres)\nGTIN – 13 (13 caracteres)\nGTIN – 12 (12 caracteres)\nGTIN – 8 (8 caracteres)'
 	#asignar campos al modulo de product.product
+	#ajuste
 	categoryProduct = fields.Selection(
 	[('Sin Categoría', 'Sin Categoría'),
 	('Materia prima Farmacéutica', 'Materia prima Farmacéutica'),
